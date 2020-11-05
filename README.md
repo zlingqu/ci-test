@@ -2,11 +2,10 @@
 
 # 一、gitlab-runner安装
 
-
-`
+```bash 
 wget https://gitlab-runner-downloads.s3.amazonaws.com/latest/rpm/gitlab-runner_amd64.rpm 
 rpm -ivh gitlab-runner_amd64.rpm
-`
+```
 
 更多安装方式查看官网：https://docs.gitlab.com/runner/install/linux-manually.html
 
@@ -14,7 +13,7 @@ rpm -ivh gitlab-runner_amd64.rpm
 
 
 url和registration-token可到自己的repo下面找到，这里配置是是specific类型的runner，如果要设置public类型的，需要gitlab管理员提供
-`bash
+```bash
 gitlab-ci-multi-runner register \
 --non-interactive \
 --url "https://gitlab.dm-ai.cn/" \
@@ -25,7 +24,7 @@ gitlab-ci-multi-runner register \
 --docker-volumes /var/run/docker.sock:/var/run/docker.sock \
 --docker-image docker:19.03 \
 --locked="false"
-`
+```
 
 runner支持很多的执行器，我这里是用docker的执行器，所以需要安装docker环境，需要保证docker服务正常启动中。
 

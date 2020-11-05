@@ -19,7 +19,7 @@ job_build:
     expire_in: 3 mos #制品包在gitlab上的保存时间（每小时定时删除过期制品），如果不设置，将永久保存。
     paths:
       - targets/
-    when: on_failure #当失败时才上传，默认是on_success。一般查bug时才需要上传
+    when: on_success #on_success这也是默认值，下一步要用，必须是默认值。其他中间文件如果需要也可以设置on_failure。
 job_make_and_push_image:
   image: docker:18.06.3
   stage: make_and_push_image
