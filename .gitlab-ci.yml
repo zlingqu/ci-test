@@ -19,7 +19,8 @@ job_build:
     expire_in: 3 mos #制品包在gitlab上的保存时间（每小时定时删除过期制品），如果不设置，将永久保存。
     paths:
       - targets/
-    when: on_success #on_success这也是默认值，下一步要用，必须是默认值。其他中间文件如果需要也可以设置on_failure。
+    only:
+      - tags #只有打tag时才执行
 job_make_and_push_image:
   image: docker:18.06.3
   stage: make_and_push_image
@@ -28,11 +29,13 @@ job_make_and_push_image:
     - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD ${DOCKER_REGIS_URL}
     - docker build -t $IMAGE_TAG_NAME .
     - docker push $IMAGE_TAG_NAME
+  only:
+    - tags #只有打tag时才执行
 job_k8s_deploy:
   image: docker.dm-ai.cn/public/kubectl:1.18.10
   stage: k8s_deploy
   only:
-    - dev #只对dev分支生效
+    - tags #只有打tag时才执行
   script:
     - cd /root
     - echo $kube_config_dev|base64 -d > .kube/config
