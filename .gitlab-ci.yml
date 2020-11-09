@@ -19,8 +19,8 @@ job_build:
     expire_in: 3 mos #制品包在gitlab上的保存时间（每小时定时删除过期制品），如果不设置，将永久保存。
     paths:
       - targets/
-    only:
-      - tags #只有打tag时才执行
+  only:
+    - tags #只有打tag时才执行
 job_make_and_push_image:
   image: docker:18.06.3
   stage: make_and_push_image
@@ -34,10 +34,10 @@ job_make_and_push_image:
 job_k8s_deploy:
   image: docker.dm-ai.cn/public/kubectl:1.18.10
   stage: k8s_deploy
-  only:
-    - tags #只有打tag时才执行
   script:
     - cd /root
     - echo $kube_config_dev|base64 -d > .kube/config
     - kubectl set image deployment/$SERVER_NAME $SERVER_NAME=$IMAGE_TAG_NAME -n $PROJECT_NAME
   when: manual #只能在gitlab-ui上手动操作，不会自动执行
+  only:
+    - tags #只有打tag时才执行
