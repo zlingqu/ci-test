@@ -4,8 +4,6 @@ variables:
   SERVER_NAME: ci-test #服务名
   # IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_COMMIT_SHA}"  #使用代码的commitid作为image的tag
   IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_RUNNER_TAGS}" #使用代码的tag名字作为image的tag
-  RUNNER_TYPE: docker #定义runner的类型，比如docker-runner、k8s-runner，需要管理员在全局配置shared类型的runner
-  BRANCH_CHOICE: tags #只有在特殊的分支才触发流程，支持正则，可选的比如dev、dev*、tags，其中tags表示只在tag上能执行
 
 stages:
   - build
@@ -22,8 +20,7 @@ job_build:
     paths:
       - targets/
 #   only:
-#     - $BRANCH_CHOICE #只有打tag时才执行
-
+#     - tags #只有打tag时才执行
   tags:
     - docker-runner
 job_make_and_push_image:
@@ -35,7 +32,7 @@ job_make_and_push_image:
     - echo "{\"auths\":{\"$DOCKER_REGIS_URL\":{\"username\":\"$REGISTRY_USERNAME\",\"password\":\"$REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_TAG_NAME #使用kaniko代替dind/sokcet模式，打镜像和上传
 #   only:
-#     - $BRANCH_CHOICE #只有打tag时才执行
+#     - tags #只有打tag时才执行
   tags:
     - docker-runner
 
@@ -49,6 +46,6 @@ job_k8s_deploy:
     - kubectl set image deployment/$SERVER_NAME $SERVER_NAME=$IMAGE_TAG_NAME -n $PROJECT_NAME
   when: manual #只能在gitlab-ui上手动操作，不会自动执行
 #   only:
-#     - $BRANCH_CHOICE #只有打tag时才执行
+#     - tags #只有打tag时才执行
   tags:
     - docker-runner
