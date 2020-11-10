@@ -5,7 +5,7 @@ variables:
     # IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_COMMIT_SHA}"  #使用代码的commitid作为image的tag
     IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_RUNNER_TAGS}" #使用代码的tag名字作为image的tag
     RUNNER_TYPE: docker-runner #定义runner的类型，比如docker-runner、k8s-runner，需要管理员在全局配置shared类型的runner
-    BRANCH_CHOICE: tags #只有在特殊的分支才触发流程，支持正则，可选的比如dev、dev*、tags，其中tags表示只在tag上能执行
+    BRANCH_CHOICE: dev #只有在特殊的分支才触发流程，支持正则，可选的比如dev、dev*、tags，其中tags表示只在tag上能执行
 
 stages:
   - build
@@ -23,7 +23,8 @@ job_build:
       - targets/
   only:
     - $BRANCH_CHOICE #只有打tag时才执行
-  tags: $RUNNER_TYPE
+  tags: 
+  - $RUNNER_TYPE
 job_make_and_push_image:
   image: 
     name: docker.dm-ai.cn/public/kaniko-executor:debug-v1.3.0
@@ -35,7 +36,8 @@ job_make_and_push_image:
 
   only:
     - $BRANCH_CHOICE #只有打tag时才执行
-  tags: $RUNNER_TYPE
+  tags: 
+  - $RUNNER_TYPE
 job_k8s_deploy:
   image: 
     name: docker.dm-ai.cn/public/alpine:kubectl-1.18.10
@@ -47,4 +49,5 @@ job_k8s_deploy:
   when: manual #只能在gitlab-ui上手动操作，不会自动执行
   only:
     - $BRANCH_CHOICE #只有打tag时才执行
-  tags: $RUNNER_TYPE
+  tags: 
+  - $RUNNER_TYPE
