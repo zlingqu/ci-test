@@ -13,8 +13,7 @@ stages:
   - k8s_deploy
 only:
   - dev
-tags:
-  - k8s-runner
+
 
 job_build:
   image: golang:1.15-alpine
@@ -28,7 +27,8 @@ job_build:
 #   only:
 #     - $BRANCH_CHOICE #只有打tag时才执行
 
-
+  tags:
+    - "$RUNNER_TYPE"
 job_make_and_push_image:
   image: 
     name: docker.dm-ai.cn/public/kaniko-executor:debug-v1.3.0
@@ -39,8 +39,8 @@ job_make_and_push_image:
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_TAG_NAME #使用kaniko代替dind/sokcet模式，打镜像和上传
 #   only:
 #     - $BRANCH_CHOICE #只有打tag时才执行
-  tags: 
-    - 'k8s-runner'
+  tags:
+    - "$RUNNER_TYPE"
 
 job_k8s_deploy:
   image: 
@@ -53,4 +53,5 @@ job_k8s_deploy:
   when: manual #只能在gitlab-ui上手动操作，不会自动执行
 #   only:
 #     - $BRANCH_CHOICE #只有打tag时才执行
-
+  tags:
+    - "$RUNNER_TYPE"
