@@ -24,7 +24,7 @@ job_build:
 #   only:
 #     - $BRANCH_CHOICE #只有打tag时才执行
   tags: 
-    - $RUNNER_TYPE
+    - ${RUNNER_TYPE}
 
 job_make_and_push_image:
   image: 
@@ -37,7 +37,7 @@ job_make_and_push_image:
 #   only:
 #     - $BRANCH_CHOICE #只有打tag时才执行
   tags: 
-    - $RUNNER_TYPE
+    - ${RUNNER_TYPE}
 
 job_k8s_deploy:
   image: 
@@ -51,4 +51,4 @@ job_k8s_deploy:
 #   only:
 #     - $BRANCH_CHOICE #只有打tag时才执行
   tags: 
-    - $RUNNER_TYPE
+    - ${RUNNER_TYPE}
