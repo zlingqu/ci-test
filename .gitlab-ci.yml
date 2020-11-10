@@ -11,9 +11,6 @@ stages:
   - build
   - make_and_push_image
   - k8s_deploy
-only:
-  - dev
-
 
 job_build:
   image: golang:1.15-alpine
