@@ -1,8 +1,8 @@
 
-gitlab-runner执行很多种类型的executive，最常用的是docker和kubernetes类型的，这里就举例这两种。详情见：https://docs.gitlab.com/runner/install/
+gitlab-runner执行很多种类型的executor，最常用的是docker和kubernetes类型的，这里就举例这两种。详情见：https://docs.gitlab.com/runner/install/
 
 
-# 1 docker类型的executive
+# 1 docker类型的executor
 
 ## 1.1 安装
 
@@ -13,7 +13,7 @@ wget https://gitlab-runner-downloads.s3.amazonaws.com/latest/rpm/gitlab-runner_a
 rpm -ivh gitlab-runner_amd64.rpm
 ```
 
-docker类型的executive有三种实现方式：
+docker类型的executor有三种实现方式：
 
 1）DIND方式，不推荐
 
@@ -78,7 +78,7 @@ check_interval = 0
 在gitlab-ui上也应该可以查到。
 
 
-# 2 kubernetes类型的executive
+# 2 kubernetes类型的executor
 
 
 # 2.1 前提条件
