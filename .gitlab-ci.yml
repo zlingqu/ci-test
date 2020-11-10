@@ -32,7 +32,7 @@ job_make_and_push_image:
     # - docker build -t $IMAGE_TAG_NAME .
     # - docker push $IMAGE_TAG_NAME
     - echo "{\"auths\":{\"$DOCKER_REGIS_URL\":{\"username\":\"$REGISTRY_USERNAME\",\"password\":\"$REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:$IMAGE_VERSION
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_TAG_NAME
 
 #   only:
 #     - tags #只有打tag时才执行
