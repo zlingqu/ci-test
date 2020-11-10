@@ -22,13 +22,16 @@ job_build:
   only:
     - tags #只有打tag时才执行
 job_make_and_push_image:
-  image: docker:18.06.3
+  image: docker.dm-ai.cn/public/kaniko-executor:debug-v1.3.0
   stage: make_and_push_image
   script:
     # - pwd && ls -lR
-    - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD ${DOCKER_REGIS_URL}
-    - docker build -t $IMAGE_TAG_NAME .
-    - docker push $IMAGE_TAG_NAME
+    # - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD ${DOCKER_REGIS_URL}
+    # - docker build -t $IMAGE_TAG_NAME .
+    # - docker push $IMAGE_TAG_NAME
+    - echo "{\"auths\":{\"$DOCKER_REGIS_URL\":{\"username\":\"$REGISTRY_USERNAME\",\"password\":\"$REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:$IMAGE_VERSION
+
   only:
     - tags #只有打tag时才执行
 job_k8s_deploy:
