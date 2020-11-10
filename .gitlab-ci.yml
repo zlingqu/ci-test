@@ -1,11 +1,11 @@
 variables:
-    DOCKER_REGIS_URL: "docker.dm-ai.cn" #docker仓库地址
-    PROJECT_NAME: devops #项目代号，也是k8s的namespace的名字
-    SERVER_NAME: ci-test #服务名
-    # IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_COMMIT_SHA}"  #使用代码的commitid作为image的tag
-    IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_RUNNER_TAGS}" #使用代码的tag名字作为image的tag
-    RUNNER_TYPE: docker-runner #定义runner的类型，比如docker-runner、k8s-runner，需要管理员在全局配置shared类型的runner
-    BRANCH_CHOICE: dev #只有在特殊的分支才触发流程，支持正则，可选的比如dev、dev*、tags，其中tags表示只在tag上能执行
+  DOCKER_REGIS_URL: "docker.dm-ai.cn" #docker仓库地址
+  PROJECT_NAME: devops #项目代号，也是k8s的namespace的名字
+  SERVER_NAME: ci-test #服务名
+  # IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_COMMIT_SHA}"  #使用代码的commitid作为image的tag
+  IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_RUNNER_TAGS}" #使用代码的tag名字作为image的tag
+  RUNNER_TYPE: docker-runner #定义runner的类型，比如docker-runner、k8s-runner，需要管理员在全局配置shared类型的runner
+  BRANCH_CHOICE: dev #只有在特殊的分支才触发流程，支持正则，可选的比如dev、dev*、tags，其中tags表示只在tag上能执行
 
 stages:
   - build
@@ -25,6 +25,7 @@ job_build:
     - $BRANCH_CHOICE #只有打tag时才执行
   tags: 
     - $RUNNER_TYPE
+
 job_make_and_push_image:
   image: 
     name: docker.dm-ai.cn/public/kaniko-executor:debug-v1.3.0
@@ -32,12 +33,12 @@ job_make_and_push_image:
   stage: make_and_push_image
   script:
     - echo "{\"auths\":{\"$DOCKER_REGIS_URL\":{\"username\":\"$REGISTRY_USERNAME\",\"password\":\"$REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_TAG_NAME #打镜像和上传
-
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_TAG_NAME #使用kaniko代替dind/sokcet模式，打镜像和上传
   only:
     - $BRANCH_CHOICE #只有打tag时才执行
   tags: 
     - $RUNNER_TYPE
+
 job_k8s_deploy:
   image: 
     name: docker.dm-ai.cn/public/alpine:kubectl-1.18.10
