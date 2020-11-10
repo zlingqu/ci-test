@@ -11,7 +11,11 @@ stages:
   - build
   - make_and_push_image
   - k8s_deploy
-  
+only:
+  - dev
+tags:
+  - k8s-runner
+
 job_build:
   image: golang:1.15-alpine
   stage: build
@@ -23,8 +27,7 @@ job_build:
       - targets/
 #   only:
 #     - $BRANCH_CHOICE #只有打tag时才执行
-  tags: 
-    - 'k8s-runner'
+
 
 job_make_and_push_image:
   image: 
@@ -50,5 +53,4 @@ job_k8s_deploy:
   when: manual #只能在gitlab-ui上手动操作，不会自动执行
 #   only:
 #     - $BRANCH_CHOICE #只有打tag时才执行
-  tags: 
-    - 'k8s-runner'
+
