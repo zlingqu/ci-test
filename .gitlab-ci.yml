@@ -22,7 +22,7 @@ job_build:
 #   only:
 #     - tags #只有打tag时才执行
   tags:
-    - docker-runner
+    - k8s-runner
 job_make_and_push_image:
   image: 
     name: docker.dm-ai.cn/public/kaniko-executor:debug-v1.3.0
@@ -34,7 +34,7 @@ job_make_and_push_image:
 #   only:
 #     - tags #只有打tag时才执行
   tags:
-    - docker-runner
+    - k8s-runner
 
 job_k8s_deploy:
   image: 
@@ -48,4 +48,4 @@ job_k8s_deploy:
 #   only:
 #     - tags #只有打tag时才执行
   tags:
-    - docker-runner
+    - k8s-runner

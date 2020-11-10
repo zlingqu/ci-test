@@ -14,8 +14,11 @@ rpm -ivh gitlab-runner_amd64.rpm
 ```
 
 docker类型的executive有三种实现方式：
+
 1）DIND方式，不推荐
+
 2）docker-socker，推荐
+
 3) kaniko方式，推荐。参考：https://docs.gitlab.com/ee/ci/docker/using_kaniko.html
 
 
@@ -79,8 +82,11 @@ check_interval = 0
 
 
 # 2.1 前提条件
+
 1）安装好k8s集群
+
 2）配制好helm3
+
 
 # 2.2 配置helm
 helm添加repo
