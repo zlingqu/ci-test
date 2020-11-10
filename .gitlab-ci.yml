@@ -19,10 +19,12 @@ job_build:
     expire_in: 3 mos #制品包在gitlab上的保存时间（每小时定时删除过期制品），如果不设置，将永久保存。
     paths:
       - targets/
-  only:
-    - tags #只有打tag时才执行
+#   only:
+#     - tags #只有打tag时才执行
 job_make_and_push_image:
-  image: docker.dm-ai.cn/public/kaniko-executor:debug-v1.3.0
+  image: 
+    name: docker.dm-ai.cn/public/kaniko-executor:debug-v1.3.0
+    entrypoint: [""]
   stage: make_and_push_image
   script:
     # - pwd && ls -lR
@@ -32,8 +34,8 @@ job_make_and_push_image:
     - echo "{\"auths\":{\"$DOCKER_REGIS_URL\":{\"username\":\"$REGISTRY_USERNAME\",\"password\":\"$REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $CI_REGISTRY_IMAGE:$IMAGE_VERSION
 
-  only:
-    - tags #只有打tag时才执行
+#   only:
+#     - tags #只有打tag时才执行
 job_k8s_deploy:
   image: docker.dm-ai.cn/public/kubectl:1.18.10
   stage: k8s_deploy
@@ -42,5 +44,5 @@ job_k8s_deploy:
     - echo $kube_config_dev|base64 -d > .kube/config
     - kubectl set image deployment/$SERVER_NAME $SERVER_NAME=$IMAGE_TAG_NAME -n $PROJECT_NAME
   when: manual #只能在gitlab-ui上手动操作，不会自动执行
-  only:
-    - tags #只有打tag时才执行
+#   only:
+#     - tags #只有打tag时才执行
