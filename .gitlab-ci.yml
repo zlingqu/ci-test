@@ -2,8 +2,9 @@ variables:
     DOCKER_REGIS_URL: "docker.dm-ai.cn" #docker仓库地址
     PROJECT_NAME: devops #项目代号，也是k8s的namespace的名字
     SERVER_NAME: ci-test #服务名
-    IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_COMMIT_SHA}"
-  
+    # IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_COMMIT_SHA}"  #使用代码的commitid作为image的tag
+    IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_RUNNER_TAGS}" #使用代码的tag名字作为image的tag
+
 stages:
   - build
   - make_and_push_image
@@ -14,29 +15,23 @@ job_build:
   stage: build
   script:
     - go build -o targets/${SERVER_NAME} -v ./
-    # - ls -lR
   artifacts:
     expire_in: 3 mos #制品包在gitlab上的保存时间（每小时定时删除过期制品），如果不设置，将永久保存。
     paths:
       - targets/
-#   only:
-#     - tags #只有打tag时才执行
+  only:
+    - tags #只有打tag时才执行
 job_make_and_push_image:
   image: 
     name: docker.dm-ai.cn/public/kaniko-executor:debug-v1.3.0
     entrypoint: [""]
   stage: make_and_push_image
   script:
-    # - pwd && ls -lR
-    # - docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD ${DOCKER_REGIS_URL}
-    # - docker build -t $IMAGE_TAG_NAME .
-    # - docker push $IMAGE_TAG_NAME
     - echo "{\"auths\":{\"$DOCKER_REGIS_URL\":{\"username\":\"$REGISTRY_USERNAME\",\"password\":\"$REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - cat /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_TAG_NAME
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_TAG_NAME #打镜像和上传
 
-#   only:
-#     - tags #只有打tag时才执行
+  only:
+    - tags #只有打tag时才执行
 job_k8s_deploy:
   image: 
     name: docker.dm-ai.cn/public/alpine:kubectl-1.18.10
@@ -46,5 +41,5 @@ job_k8s_deploy:
     - echo $kube_config_dev|base64 -d > .kube/config
     - kubectl set image deployment/$SERVER_NAME $SERVER_NAME=$IMAGE_TAG_NAME -n $PROJECT_NAME
   when: manual #只能在gitlab-ui上手动操作，不会自动执行
-#   only:
-#     - tags #只有打tag时才执行
+  only:
+    - tags #只有打tag时才执行
