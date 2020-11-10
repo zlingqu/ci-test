@@ -24,7 +24,7 @@ job_build:
   only:
     - $BRANCH_CHOICE #只有打tag时才执行
   tags: 
-  - $RUNNER_TYPE
+    - $RUNNER_TYPE
 job_make_and_push_image:
   image: 
     name: docker.dm-ai.cn/public/kaniko-executor:debug-v1.3.0
@@ -37,7 +37,7 @@ job_make_and_push_image:
   only:
     - $BRANCH_CHOICE #只有打tag时才执行
   tags: 
-  - $RUNNER_TYPE
+    - $RUNNER_TYPE
 job_k8s_deploy:
   image: 
     name: docker.dm-ai.cn/public/alpine:kubectl-1.18.10
@@ -50,4 +50,4 @@ job_k8s_deploy:
   only:
     - $BRANCH_CHOICE #只有打tag时才执行
   tags: 
-  - $RUNNER_TYPE
+    - $RUNNER_TYPE
