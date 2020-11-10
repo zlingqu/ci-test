@@ -38,7 +38,8 @@ job_make_and_push_image:
 #   only:
 #     - tags #只有打tag时才执行
 job_k8s_deploy:
-  image: docker.dm-ai.cn/public/kubectl:1.18.10
+  image: 
+    name: docker.dm-ai.cn/public/alpine:kubectl-1.18.10
   stage: k8s_deploy
   script:
     - cd /root
