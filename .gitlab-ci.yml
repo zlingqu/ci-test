@@ -2,8 +2,8 @@ variables:
   DOCKER_REGIS_URL: "docker.dm-ai.cn" #docker仓库地址
   PROJECT_NAME: devops #项目代号，也是k8s的namespace的名字
   SERVER_NAME: ci-test #服务名
-  # IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_COMMIT_SHA}"  #使用代码的commitid作为image的tag
-  IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_RUNNER_TAGS}" #使用代码的tag名字作为image的tag
+  IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_COMMIT_SHA}"  #使用代码的commitid作为image的tag
+  # IMAGE_TAG_NAME: "${DOCKER_REGIS_URL}/${PROJECT_NAME}/${SERVER_NAME}:${CI_RUNNER_TAGS}" #使用代码的tag名字作为image的tag
 
 stages:
   - build
