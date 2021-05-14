@@ -56,4 +56,5 @@ func main() {
 	r.GET("/qrcode", GetQrcode)
 
 	r.Run(":" + "80") // listen and serve on 0.0.0.0:80
+	// 超时argocd
 }
