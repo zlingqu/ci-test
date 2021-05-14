@@ -14,6 +14,7 @@ job_build:
   image: golang:1.15-alpine
   stage: build
   script:
+    - export GOPROXY=https://mirrors.aliyun.com/goproxy/
     - go build -o targets/${SERVER_NAME} -v ./
   artifacts:
     expire_in: 3 mos #制品包在gitlab上的保存时间（每小时定时删除过期制品），如果不设置，将永久保存。
@@ -25,7 +26,7 @@ job_build:
     - k8s-runner
 job_make_and_push_image:
   image: 
-    name: docker.dm-ai.cn/public/kaniko-executor:debug-v1.3.0
+    name: docker.dm-ai.cn/public/kaniko-executor:debug-v1.6.0
     entrypoint: [""]
   stage: make_and_push_image
   script:
