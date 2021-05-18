@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name:  ci-test
+  namespace: devops
+spec:
+  entryPoints:
+  - web
+  routes:
+  - match: Host(`ci-test.devops.dev.dm-ai.cn`)
+    kind: Rule
+    services:
+    - name: ci-test
+      namespace: devops
+      port: 80
