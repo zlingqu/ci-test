@@ -40,7 +40,7 @@ job_make_and_push_image:
 
 job_edit_k8s_yaml:
   image: 
-    name: docker.dm-ai.cn/public/kustomize:0.2
+    name: docker.dm-ai.cn/public/kustomize:0.3
   stage: edit_k8s_yaml
   script:
     - git clone -b dev git@gitlab.dm-ai.cn:devops/adp/deployment.git
