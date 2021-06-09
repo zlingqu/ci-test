@@ -103,7 +103,7 @@ helm search repo -l gitlab/gitlab-runner  #查看版本
 ---
 image: gitlab/gitlab-runner:alpine-v13.5.0
 gitlabUrl: https://gitlab.dm-ai.cn/
-runnerRegistrationToken: "********" #这里要修改
+runnerRegistrationToken: "***" #改成实际的
 imagePullPolicy: IfNotPresent
 unregisterRunners: true
 terminationGracePeriodSeconds: 3600
@@ -136,18 +136,21 @@ securityContext:
   runAsUser: 100
 resources:
   limits:
-    memory: 256Mi
-    cpu: 200m
+    memory: 4Gi
+    cpu: 2
   requests:
     memory: 128Mi
     cpu: 100m
 affinity: {}
 nodeSelector: {}
 tolerations: []
-hostAliases: []
+hostAliases:
+  - ip: "192.168.3.221"
+    hostnames:
+    - "gitlab.dm-ai.cn"
 podAnnotations: {}
 podLabels: {}
-hpa: 
+hpa:
   minReplicas: 1
   maxReplicas: 10
   metrics:
@@ -190,6 +193,8 @@ myrunner        gitlab-runner   4               2020-11-10 14:36:58.75958973 +08
 当提价代码、合并代码等动作时，可触发gitlab-ci执行，具体看该repo的左侧的CI/CD。
 
 .gitlab-ci.yml 的配置可参考官方文档：https://docs.gitlab.com/ee/ci/yaml/
+
+这里也使用了kustomize和ArgoCD。kustomize更新git repo的对应文件，ArgoCD监控此文件，实时更新。
 
 
 # 4、 接口说明
@@ -240,5 +245,36 @@ X-Real-Ip:192.168.3.140 #按照上面的nginx配置，也可以将此作为来�
 X-Forwarded-For:192.168.3.140, 10.12.19.31 #用此判断来源ip，有时候不准确。不会有第二层的nginx地址，这是正常的。
 请求RawQuery是：
 a=b
+请求body是:
+```
+
+
+这是另一次测试：
+部署到k8s，使用traefik暴露服务。
+
+客户端IP：192.168.3.140
+```
+[root@master ~]# curl http://ci-test.devops.dev.dm-ai.cn/req-info
+本次请求客户端的IP和端口是:10.244.4.0:41938
+请求完整的url是:http://ci-test.devops.dev.dm-ai.cn/req-info
+请求协议是:http
+请求方式是:GET
+请求path是：/req-info
+请求的http版本是:HTTP/1.1
+请求host是：ci-test.devops.dev.dm-ai.cn
+请求RequestURI是：/req-info
+请求Referer是：
+请求header如下：
+X-Forwarded-For:192.168.3.140
+X-Forwarded-Host:ci-test.devops.dev.dm-ai.cn
+Accept-Encoding:gzip
+X-Forwarded-Port:80
+X-Forwarded-Proto:http
+X-Forwarded-Server:k8s-dev-10-12-12-7
+X-Real-Ip:192.168.3.140
+User-Agent:curl/7.29.0
+Accept:*/*
+请求RawQuery是：
+
 请求body是:
 ```
