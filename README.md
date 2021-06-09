@@ -190,3 +190,55 @@ myrunner        gitlab-runner   4               2020-11-10 14:36:58.75958973 +08
 当提价代码、合并代码等动作时，可触发gitlab-ci执行，具体看该repo的左侧的CI/CD。
 
 .gitlab-ci.yml 的配置可参考官方文档：https://docs.gitlab.com/ee/ci/yaml/
+
+
+# 4、 接口说明
+```
+/:           默认
+/hostname:   获取主机名，可用于测试多副本情况下，负载均衡策略，比如ip hash应该是只有一个节点返回，如果是轮询，则逐个返回
+/qrcode ：   获取二维码
+/req-info:   返回一些请求的信息，比如header。可用于理解http协议、Host、X-Forwarded-For、Referer防盗链等
+```
+如下是一次测试效果：
+客户端IP：192.168.3.140
+第一层nginx代理:10.12.19.31
+```
+# 关键配置
+           proxy_set_header Host $http_host; #Host透传
+           proxy_set_header X-Real-IP $remote_addr; #将remote_addr存入x-real-ip
+           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+```
+第二层nginx代理：192.168.3.199
+```
+# 关键配置：
+           proxy_set_header Host $http_host; #Host透传
+           proxy_set_header X-Real-IP $http_x_real_ip; #x-real-ip透传
+           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+           proxy_set_header http_host $http_host; #随意加的一个字段
+           proxy_set_header proxy_host $proxy_host; #proxy_host记录后端的地址
+```
+
+服务端IP：192.168.4.41
+```
+[root@master ~]# curl 10.12.19.31/req-info?a=b
+本次请求客户端的IP和端口是:192.168.3.199:43262
+请求完整的url是:http://10.12.19.31/req-info?a=b
+请求协议是:http
+请求方式是:GET
+请求path是：/req-info
+请求的http版本是:HTTP/1.0
+请求host是：10.12.19.31
+请求RequestURI是：/req-info?a=b
+请求Referer是：
+请求header如下：
+Http_host:10.12.19.31
+Proxy_host:192.168.4.41
+Connection:close
+User-Agent:curl/7.29.0
+Accept:*/*
+X-Real-Ip:192.168.3.140 #按照上面的nginx配置，也可以将此作为来源IP
+X-Forwarded-For:192.168.3.140, 10.12.19.31 #用此判断来源ip，有时候不准确。不会有第二层的nginx地址，这是正常的。
+请求RawQuery是：
+a=b
+请求body是:
+```
