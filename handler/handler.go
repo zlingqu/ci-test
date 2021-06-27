@@ -2,6 +2,7 @@ package handler
 
 import (
 	model "ci-test/model"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -92,6 +93,7 @@ func GetRequestInfo(c *gin.Context) { //返回请求的一些信息
 			"请求Referer是：" + c.Request.Referer() + "\n" + //显示上一跳的信息，可用于防盗链、网站流量来源分析等领域
 			"请求header如下：\n" + head +
 			"请求RawQuery是：\n" + c.Request.URL.RawQuery + "\n" +
+			"请求query param 是：\n" + fmt.Sprintf("%#v", c.Request.URL.Query()) + "\n" +
 			"请求body是:" + string(body) + "\n"
 
 	c.Writer.Header().Add("name", "zlingqu") //返回的头部中，添加一个特殊的
